@@ -1,0 +1,817 @@
+---
+title: "Restart: graphiques"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+css: "www/style_tuto_learnr.css"
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(gradethis)
+library(testthat)
+
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
+gradethis_setup()
+ 
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+![](www/grimoire.png){width=70px}<a href="http://perso.ens-lyon.fr/lise.vaudor/Supports_formation/initR_5_graphiques_introduction.html#(1)" target="_blank">Cliquer ici pour les diapos de cours</a>
+
+Pour cette partie nous allons continuer à travailler sur le jeu de données `potions`.
+
+Pour tous les exercices de cette partie, les packages `dplyr` et `ggplot2` ainsi que le jeu de données `potions` seront d'ores et déjà chargés et disponibles dans l'environnement.
+
+## 5.1 Premier graphique: histogramme simple
+
+Complétez le code ci-dessous pour tracer l'histogramme correspondant à la propriété `p_alteration` (couleur de remplissage: `blue`).
+
+```{r ggplot-setup, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+```
+
+
+```{r ggplot, exercise=TRUE, exercise.lines=4,  exercise.setup="ggplot-setup"}
+ggplot(_____, aes(x=____)) +
+  geom_histogram(fill=_____)
+```
+
+```{r ggplot-solution}
+ggplot(potions, aes(x=p_alteration)) +
+  geom_histogram(fill="blue")
+```
+
+```{r ggplot-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=p_alteration)) +
+  geom_histogram(fill="blue")
+pass_message="Super!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.2 Choix de geom
+
+```{r choix_geom}
+question("Quel geom est le plus approprié si je souhaite tracer p_alteration (en y) en fonction de m_formule (en x) dans un graphique simple?",
+         answer("un geom de type point"),
+         answer("un geom de type histogram"),
+         answer("un geom de type boxplot", correct=TRUE),
+         correct="Oui, pour y numérique en fonction de x catégoriel, un boxplot est la meilleure option parmi ces trois possibilités. ",
+         incorrect="x est catégorielle, y est numérique",
+         allow_retry=TRUE)
+```
+
+## 5.3 Geoms en tous genres
+
+Complétez le code pour créer les graphiques suivants (il y a à chaque fois 3 éléments importants à spécifier: le jeu de données, les variables x et (éventuellement) y, et la nature du geom!):
+
+-un **nuage de points** montrant `p_alteration` (y) en fonction de `p_resistance` (x)
+
+```{r tous_geoms_1, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=___, y=___)) +
+   ____()
+```
+
+```{r tous_geoms_1-solution}
+ggplot(potions, aes(x=p_resistance, y=p_alteration)) +
+   geom_point()
+```
+
+
+```{r tous_geoms_1-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=p_resistance, y=p_alteration)) +
+   geom_point()
+
+pass_message="Bien! Il y a encore bien d'autres geoms disponibles, mais `point` est incontournable..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)
+})
+```
+
+
+
+- un **boxplot** montrant `p_alteration` (y) en fonction de `m_formule` (x)
+
+```{r tous_geoms_2, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+ggplot(___________________________) +
+  ______()
+```
+
+
+```{r tous_geoms_2-solution}
+ggplot(potions, aes(x=m_formule, y=p_alteration)) +
+  geom_boxplot()
+```
+
+```{r tous_geoms_2-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=m_formule, y=p_alteration)) +
+  geom_boxplot()
+
+pass_message="Oui! le geom boxplot est lui aussi un geom incontournable ;-)"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+
+```
+
+
+- p3, un **barplot** (`geom_bar()`) montrant les effectifs de `m_preparation` (x)
+
+```{r tous_geoms_3, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+______________________________________
+  _____________
+```
+
+
+```{r tous_geoms_3-solution}
+ggplot(potions, aes(x=m_preparation)) +
+  geom_bar()
+```
+
+```{r tous_geoms_3-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=m_preparation)) +
+  geom_bar()
+
+pass_message="Parfait! Remarquez que `geom_bar()` calcule par lui-même les effectifs par groupe."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+
+## 5.4 Paramétrer des geoms
+
+On a repris les 3 graphiques créés précédemment, mais cette fois on souhaite **paramétrer les geoms**. Complétez le code pour que
+
+- les points soient **bleus**
+
+```{r params_geoms_1, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=p_resistance, y=p_alteration)) +
+   geom_point(_____)
+```
+
+
+```{r params_geoms_1-solution}
+ggplot(potions, aes(x=p_resistance, y=p_alteration)) +
+   geom_point(color="blue")
+```
+
+
+```{r params_geoms_1-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=p_resistance, y=p_alteration)) +
+   geom_point(color="blue")
+
+pass_message="Parfait! Ici il s'agit bien de la couleur de contour et non de celle de remplissage..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+- l'**intérieur** des boîtes soit **rouge**
+
+```{r params_geoms_2, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=m_formule, y=p_alteration)) +
+  geom_boxplot(_____)
+```
+
+
+```{r params_geoms_2-solution}
+ggplot(potions, aes(x=m_formule, y=p_alteration)) +
+  geom_boxplot(fill="red")
+```
+
+```{r params_geoms_2-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=m_formule, y=p_alteration)) +
+  geom_boxplot(fill="red")
+
+pass_message="Oui! ici il s'agissait du remplissage..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+- les barres soient **transparentes** (à 50%)
+
+```{r params_geoms_3, exercise=TRUE, exercise.lines=4, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=m_preparation)) +
+  geom_bar(_____)
+```
+
+```{r params_geoms_3-solution}
+ggplot(potions, aes(x=m_preparation)) +
+  geom_bar(alpha=0.5)
+```
+
+```{r params_geoms_3-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=m_preparation)) +
+  geom_bar(alpha=0.5)
+
+pass_message="Formidable!..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.5 Superposer des geoms
+
+Complétez le code pour représenter la variable `i_aile_papillon` du jeu de données `potions` en **superposant deux geoms**:
+
+- un geom de type **histogram**, et de couleur de **remplissage jaune**
+- un geom de type **rug**
+
+
+```{r superpose_geoms, exercise=TRUE, exercise.lines=6, exercise.setup="ggplot-setup"}
+_____________________+
+  _______________+
+  ___________
+```
+
+```{r superpose_geoms-solution}
+ggplot(potions, aes(x=i_aile_papillon)) +
+  geom_histogram(fill="yellow") +
+  geom_rug()
+```
+
+```{r superpose_geoms-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p <- ggplot(potions, aes(x=i_aile_papillon)) +
+  geom_histogram(fill="yellow") +
+  geom_rug()
+
+pass_message="Impec!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.6 Mapping
+
+Complétez le code ci-dessous pour que les trois graphiques soient trois **nuages de points** représentant la propriété d'invisibilité (`p_invisibilite`, en y) en fonction de la quantité **d'aile de papillon** (`i_aile_papillon`, en x), et
+
+- la couleur du `geom_point()` corresponde à la formule (variable `m_formule`)
+
+```{r mapping_1, exercise=TRUE, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=___, y=___)) +
+  geom_point(aes(____))
+```
+
+```{r mapping_1-solution}
+ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite)) +
+  geom_point(aes(color=m_formule))
+```
+
+```{r mapping_1-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite)) +
+  geom_point(aes(color=m_formule))
+
+pass_message="Très bien!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+- la taille du `geom_point()` corresponde à la résistance (variable `p_resistance`)
+
+```{r mapping_2, exercise=TRUE, exercise.setup="ggplot-setup"}
+ggplot(________, aes(_____________))+
+  geom_point(_________)
+
+```
+
+```{r mapping_2-solution}
+ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+  geom_point(aes(size=p_resistance))
+```
+
+```{r mapping_2-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+  geom_point(aes(size=p_resistance))
+
+pass_message="Super!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+- les **deux conditions précédentes soient remplies** pour le `geom_point()`
+
+
+```{r mapping_3, exercise=TRUE, exercise.setup="ggplot-setup"}
+p3 <- ggplot(____________________________)+
+   ________(__________)
+```
+
+```{r mapping_3-solution}
+ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+   geom_point(aes(color=m_formule,size=p_resistance))
+```
+
+```{r mapping_3-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+   geom_point(aes(color=m_formule,size=p_resistance))
+
+pass_message="Très bien!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+
+## 5.7 Paramètres fixes vs paramètres variables
+
+Modifiez le code ci-dessous pour que la **forme des points** corresponde à un **carré plein** (voir l'antisèche ggplot2...)
+
+<small> Si vous définissez le paramètre comme une constante, vous devez le spécifier à l'extérieur de la fonction aes()... </small>
+
+```{r paramsfixes, exercise=TRUE, exercise.lines=6, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+  geom_point(aes(size=p_resistance, color=m_formule))
+```
+
+```{r paramsfixes-solution}
+ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+  geom_point(shape=15,
+             aes(size=p_resistance, color=m_formule))
+```
+
+```{r paramsfixes-check}
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=i_aile_papillon, y=p_invisibilite))+
+  geom_point(shape=15,
+             aes(size=p_resistance, color=m_formule))
+
+pass_message="Parfait..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.8 Esthétique globale ou propre à un geom
+
+Considérez les lignes de codes suivantes:
+
+```{r params, echo=TRUE, eval=FALSE}
+p <- ggplot(potions, aes(x=m_preparation, y=p_resistance, color=m_formule))+
+  geom_boxplot(fill="grey") +
+  geom_rug()
+```
+
+```{r question-params}
+question("Quelle proposition est vraie pour le graphique p créé ci-dessus?",
+         answer("la couleur de remplissage des boxplots dépend de m_formule"),
+         answer("la couleur des 'rugs' est grise"),
+         answer("la couleur de bordure des boxplots est grise"),
+         answer("la couleur de remplissage des boxplots est grise", correct=TRUE),
+         correct="Exact. La couleur de remplissage des boxplots est grise, la couleur de bordure dépend quant à elle de `m_formule`.",
+         incorrect="Non! Attention à la distinction entre `fill` et `color`, ainsi qu'à la différence entre paramètres fixes et paramètres fixés par `aes()`",
+         allow_retry=TRUE)
+```
+
+
+## 5.9 Ajustement de la position
+
+Examinez le code ci-dessous et le graphique qu'il renvoie.
+
+Corrigez ce code pour que les effectifs des différentes coupes apparaissent les uns à côté des autres (paramètre position... consultez votre antisèche!!)
+
+Vous pouvez voir les valeurs possibles pour ce paramètre sur votre antisèche ggplot (2ème page, "Position Adjustments")
+
+<small> Attention, le paramètre de position n'est pas une esthétique...</small>
+
+```{r graphique_position, exercise=TRUE, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=p_resistance))+
+  geom_histogram(bins=10,aes(fill=m_formule))
+```
+
+```{r, graphique_position-solution}
+ggplot(potions, aes(x=p_resistance))+
+  geom_histogram(bins=10, position="dodge",aes(fill=m_formule))
+```
+
+```{r graphique_position-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=p_resistance))+
+  geom_histogram(bins=10, position="dodge",aes(fill=m_formule))
+
+pass_message="Bien joué!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.10 Facettes
+
+Complétez le code ci-dessous pour produire **différentes facettes** du même graphique en fonction du mode de **préparation** de la potion (3 lignes, 1 colonne)
+
+<small> Faites en sorte que les facettes soient en ligne et non en colonne dans l'appel à la fonction facet_grid()... </small>
+
+```{r facettes, exercise=TRUE, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=i_givreboises, y=p_alteration, color=m_formule)) +
+  geom_point() +
+  ____________
+```
+
+```{r facettes-solution}
+ggplot(potions, aes(x=i_givreboises, y=p_alteration, color=m_formule)) +
+  geom_point() +
+  facet_grid(rows=vars(m_preparation))
+```
+
+```{r facettes-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions, aes(x=i_givreboises, y=p_alteration, color=m_formule)) +
+  geom_point() +
+  facet_grid(rows=vars(m_preparation))
+
+pass_message="Superbe!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.11 Allonger son tableau pour facetter
+
+Imaginons maintenant que l'on veuille montrer le lien entre la méthode de confection de la potion (`m_preparation` et `m_formule`) et les ingrédients, de sorte que **chaque ingrédient corresponde à une facette du graphique**.
+
+Cela implique que le jeu de données soit reformaté de manière à ce que l'**ensemble des valeurs d'ingrédients corresponde à une même variable** `i_valeur`(et on aura donc son pendant `i_type`, qui nous dira de quel ingrédient il s'agit). 
+
+On a donc besoin d'utiliser la fonction `tidyr::pivot_longer()`. Complétez le script ci-après pour réaliser cette opération.
+
+```{r pivot_long_facet_1, exercise=TRUE, exercise.lines=9, exercise.setup="ggplot-setup"}
+potions_long=potions %>% 
+  tidyr::pivot_longer(cols=___,
+                      ____="i_type",
+                      names_prefix="i_",
+                      ____="i_valeur")
+
+potions_long %>%
+  select(i_type,i_valeur) %>% 
+  head()
+
+``` 
+
+```{r pivot_long_facet_1-solution}
+potions_long=potions %>% 
+  tidyr::pivot_longer(cols=starts_with("i_"),
+                      names_to="i_type",
+                      names_prefix="i_",
+                      values_to="i_valeur")
+potions_long %>%
+  select(i_type,i_valeur) %>% 
+  head()
+
+```
+
+
+```{r pivot_long_facet_1-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+    potions_long=potions %>% 
+      tidyr::pivot_longer(cols=starts_with("i_"),
+                          names_to="i_type",
+                          names_prefix="i_",
+                          values_to="i_valeur")
+    if(!identical(potions_long,.envir_result[["potions_long"]])){
+      fail("Le tableau ne correspond pas à ce que j'attendais.")
+    }
+    pass("Parfait! vous allez pouvoir passer à la partie de cet exercice qui porte plus spécifiquement sur la production du graphique...")
+})
+```
+
+```{r pivot_setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+    potions_long=potions %>% 
+      tidyr::pivot_longer(cols=starts_with("i_"),
+                          names_to="i_type",
+                          names_prefix="i_",
+                          values_to="i_valeur")
+```
+
+Ci-après, le tableau `potions_long` a déjà été créé pour vous. Complétez le code pour créer des facettes correspondant à chaque type d'ingrédient.
+
+```{r pivot_long_facet_2, exercise=TRUE, exercise.lines=7, exercise.setup="pivot_setup"}
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+ggplot(potions_long,
+       aes(x=m_preparation, y=i_valeur, fill=m_formule))+
+  geom_boxplot()+
+  scale_y_log10()+
+  facet_wrap(___,
+             scales="free_y")
+```
+
+```{r pivot_long_facet_2-solution}
+ggplot(potions_long,
+       aes(x=m_preparation, y=i_valeur, fill=m_formule))+
+  geom_boxplot()+
+  scale_y_log10()+
+  facet_wrap(vars(i_type),
+             scales="free_y")
+```
+
+
+```{r pivot_long_facet_2-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+    potions_long=potions %>% 
+      tidyr::pivot_longer(cols=starts_with("i_"),
+                          names_to="i_type",
+                          names_prefix="i_",
+                          values_to="i_valeur")
+    
+    p=ggplot(potions_long,
+           aes(x=m_preparation, y=i_valeur, fill=m_formule))+
+      geom_boxplot()+
+      scale_y_log10()+
+      facet_wrap(vars(i_type),
+                 scale="free_y")
+    
+    pass_message="Eh oui! Prenez une minute pour apprécier la richesse de ce graphique et les possibilités qu'offrent la combinaison dplyr-tidyr-ggplot!..."
+    source("scripts/compare_graphics_function.R")
+    
+    compare_graphics(p,.result,pass_message)
+})
+```
+
+## 5.12 Etiquettes et transformation d'axes
+
+Modifiez le code ci-dessous pour que:
+
+- les **étiquettes d'axes** soient "Mode de préparation" (en x) et "Pouvoir d'altération" (en y)
+- l'**échelle des y** soit transformée par une transformation `log10`
+- les **valeurs de l'axe **x soient retranscrites (en "Par bouillon","Par distillation","Par macération")
+
+Consultez l'antisèche ggplot2!!!
+
+
+```{r, etiqu_transfo, exercise=TRUE, exercise.setup="ggplot-setup"}
+p <- ggplot(potions, aes(x=m_preparation, y=i_pied_lutin)) +
+  geom_boxplot(fill="pink") +
+  labs(____) +
+  scale_y___()+
+  scale_x____(___)
+plot(p)
+```
+
+```{r etiqu_transfo-solution}
+p <- ggplot(potions, aes(x=m_preparation, y=i_pied_lutin)) +
+  geom_boxplot(fill="pink") +
+  labs(x="Mode de préparation",y="Pouvoir d'altération") +
+  scale_y_log10()+
+  scale_x_discrete(labels=c("bouillon"="Par bouillon",
+                          "distillation"="Par distillation",
+                          "maceration"="Par macération"))
+plot(p)
+```
+
+```{r etiqu_transfo-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p <- ggplot(potions, aes(x=m_preparation, y=i_pied_lutin)) +
+  geom_boxplot(fill="pink") +
+  labs(x="Mode de préparation",y="Pouvoir d'altération") +
+  scale_y_log10()+
+  scale_x_discrete(labels=c("bouillon"="Par bouillon",
+                          "distillation"="Par distillation",
+                          "maceration"="Par macération"))
+
+pass_message="Parfait..."
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.13 Echelles de couleurs
+
+Imaginons que je souhaite produire un **nuage de points** montrant **`p_resistance` en fonction de `i_graisse_troll`**, en faisant varier **la couleur en fonction de `p_conjuration`**.
+
+```{r echelle_coloree}
+question("Quelle fonction devrais-je utiliser pour éventuellement modifier l'échelle colorée? (consultez l'antisèche ggplot2!)",
+         answer("scale_color_brewer()"),
+         answer("scale_fill_brewer()"),
+         answer("scale_color_gradient()", correct=TRUE),
+         answer("scale_fill_gradient()"),
+         correct="Oui, bravo! Retenez cette solution pour l'exercice suivant...",
+         incorrect="`brewer` s'applique à des échelles discrètes, or `p_conjuration` est une variable continue, de plus on s'intéresse à une couleur de bordure et non à une couleur de remplissage",
+         allow_retry=TRUE)
+```
+
+## 5.14 Thème et échelle de couleur
+
+Modifiez le code qui vous est fourni ci-dessous pour reproduire cette figure.
+
+Il s'agit de
+
+- modifier le **thème**
+- modifier l'**échelle colorée** pour que les **quantités les plus basses** correspondent à la couleur **jaune** et les **plus hautes** à la couleur **bleue**.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+path="http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv"
+potions <- readr::read_delim(path,
+                             delim=";")
+ggplot(potions,
+       aes(x=m_formule,
+           y=p_conjuration,
+           color=i_larmes_crocodile))+
+  geom_jitter() +
+  theme_minimal()+
+  scale_color_gradient(low="yellow",high="blue")
+```
+
+
+```{r, reproduit_fig, exercise=TRUE, exercise.setup="ggplot-setup"}
+ggplot(potions, aes(x=m_formule,
+                        y=p_conjuration,
+                        color=i_larmes_crocodile))+
+  geom_jitter() +
+  __________()+
+  __________(_______)
+```
+
+
+```{r, reproduit_fig-solution}
+ggplot(potions,
+       aes(x=m_formule,
+           y=p_conjuration,
+           color=i_larmes_crocodile))+
+  geom_jitter() +
+  theme_minimal()+
+  scale_color_gradient(low="yellow",high="blue")
+```
+
+```{r reproduit_fig-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+p=ggplot(potions,
+       aes(x=m_formule,
+           y=p_conjuration,
+           color=i_larmes_crocodile))+
+  geom_jitter() +
+  theme_minimal()+
+  scale_color_gradient(low="yellow",high="blue")
+
+pass_message="Bravo! C'est de toute beauté!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```
+
+## 5.15 Rajout d'un nuage de points montrant les moyennes
+
+Complétez le code ci-dessous pour rajouter des **points bleus** montrant les **moyennes de propriété** (donc moyennes de y) **par mode de préparation**.
+
+```{r points_moy, exercise=TRUE, exercise.setup="ggplot-setup"}
+# Vers données "en long" avec variables p_type et p_valeur
+potions_long=potions %>% 
+  tidyr::pivot_longer(cols=___,
+                      names_to="p_type",
+                      names_prefix="p_",
+                      values_to="p_valeur")
+
+# Calcul des moyennes de propriété par type de propriété
+potions_moy <- potions_long %>%
+     group_by(____) %>%
+     summarise(p_moy=mean(____),
+               .groups="drop")
+
+ggplot(potions_long,
+            aes(x=p_type,y=p_valeur)) +
+  geom_boxplot()+
+  geom_point(data=____,
+             aes(y=___),
+             col="blue")+
+  coord_flip()
+```
+
+```{r points_moy-solution}
+# Vers données "en long" avec variables p_type et p_valeur
+potions_long=potions %>% 
+  tidyr::pivot_longer(cols=starts_with("p_"),
+                      names_to="p_type",
+                      names_prefix="p_",
+                      values_to="p_valeur")
+
+# Calcul des moyennes de propriété par type de propriété
+potions_moy <- potions_long %>%
+     group_by(p_type) %>%
+     summarise(p_moy=mean(p_valeur),
+               .groups="drop")
+
+ggplot(potions_long,
+            aes(x=p_type,y=p_valeur)) +
+  geom_boxplot()+
+  geom_point(data=potions_moy,
+             aes(y=p_moy),
+             col="blue")+
+  coord_flip()
+
+```
+
+```{r points_moy-check}
+grade_this({
+library(ggplot2)
+library(dplyr)
+potions <- readr::read_delim("http://perso.ens-lyon.fr/lise.vaudor/grimoireStat/datasets/potions.csv",
+                             delim=";")
+# Vers données "en long" avec variables p_type et p_valeur
+potions_long=potions %>% 
+  tidyr::pivot_longer(cols=starts_with("p_"),
+                      names_to="p_type",
+                      names_prefix="p_",
+                      values_to="p_valeur")
+
+# Calcul des moyennes de propriété par type de propriété
+potions_moy <- potions_long %>%
+     group_by(p_type) %>%
+     summarise(p_moy=mean(p_valeur),
+               .groups="drop")
+
+p=ggplot(potions_long,
+            aes(x=p_type,y=p_valeur)) +
+  geom_boxplot()+
+  geom_point(data=potions_moy,
+             aes(y=p_moy),
+             col="blue")+
+  coord_flip()
+
+pass_message="Oui, beau travail!"
+source("scripts/compare_graphics_function.R")
+compare_graphics(p,.result,pass_message)})
+```

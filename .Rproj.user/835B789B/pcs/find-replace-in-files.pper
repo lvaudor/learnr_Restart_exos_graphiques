@@ -1,0 +1,13 @@
+{
+    "dialog-state": {
+        "query": "print",
+        "path": "~/Documents/Pedagogie/FORMATIONS/Restart_Tuto_learnr_graphiques",
+        "regex": false,
+        "caseSensitive": false,
+        "filePatterns": [],
+        "excludeFilePatterns": [],
+        "resultsCount": 50,
+        "errorCount": 0,
+        "replaceErrors": ""
+    }
+}
